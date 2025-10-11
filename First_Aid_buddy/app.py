@@ -293,10 +293,13 @@ if 'messages' not in st.session_state:
     st.session_state.messages = []
 
 if 'api_key' not in st.session_state:
-    st.session_state.api_key = None
+    st.session_state.api_key = os.getenv('ANTHROPIC_API_KEY')
 
 if 'client' not in st.session_state:
     st.session_state.client = None
+    # Auto-initialize if API key is in environment
+    if st.session_state.api_key:
+        st.session_state.client = initialize_client(st.session_state.api_key)
 
 # ============================================================================
 # MAIN UI
@@ -309,18 +312,40 @@ st.markdown('<p class="subtitle">Your AI-powered first-aid assistant • Availab
 # Sidebar for API Key
 with st.sidebar:
     st.header("⚙️ Configuration")
-    api_key_input = st.text_input(
-        "Anthropic API Key",
-        type="password",
-        value=st.session_state.api_key if st.session_state.api_key else "",
-        help="Enter your Anthropic API key. Get one at https://console.anthropic.com/"
-    )
     
-    if api_key_input and api_key_input != st.session_state.api_key:
-        st.session_state.api_key = api_key_input
-        st.session_state.client = initialize_client(api_key_input)
-        if st.session_state.client:
-            st.success("✅ API key configured!")
+    # Check if API key is loaded from environment or already in session
+    if st.session_state.api_key and st.session_state.client:
+        st.success("✅ API key configured")
+        if not st.session_state.get('manual_key_entered'):
+            st.info("🔒 Loaded from .env file")
+        
+        # Option to change key
+        if st.button("🔄 Change API Key"):
+            st.session_state.api_key = None
+            st.session_state.client = None
+            st.session_state.manual_key_entered = False
+            st.rerun()
+    else:
+        # Show input field if no API key
+        st.info("👉 Enter your Anthropic API key to begin")
+        api_key_input = st.text_input(
+            "Anthropic API Key",
+            type="password",
+            placeholder="sk-ant-api03-...",
+            help="Get your API key from: https://console.anthropic.com/",
+            key="api_key_input"
+        )
+        
+        if st.button("Save API Key", type="primary"):
+            if api_key_input and api_key_input.startswith("sk-ant-"):
+                st.session_state.api_key = api_key_input
+                st.session_state.manual_key_entered = True
+                st.session_state.client = initialize_client(api_key_input)
+                if st.session_state.client:
+                    st.success("✅ API key saved!")
+                    st.rerun()
+            else:
+                st.error("❌ Invalid API key format. Should start with 'sk-ant-'")
     
     st.divider()
     
@@ -376,10 +401,13 @@ else:
             
             st.markdown(f"""
             <div class="bot-message">
-                <strong>🤖 First-Aid Buddy:</strong><br>
-                {message["content"].replace(chr(10), '<br>')}
-            </div>
+                <strong>🤖 First-Aid Buddy:</strong><br><br>
             """, unsafe_allow_html=True)
+            
+            # Render the message content with proper markdown formatting
+            st.markdown(message["content"])
+            
+            st.markdown("</div>", unsafe_allow_html=True)
     
     # Chat input
     st.divider()
