@@ -1,0 +1,69 @@
+# Git
+.git
+.gitignore
+.github
+
+# Python
+__pycache__
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv
+
+# Environment
+.env
+.env.*
+*.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Documentation (except what's needed)
+*.md
+!README.md
+!LICENSE
+!TERMS_OF_SERVICE.md
+!PRIVACY_POLICY.md
+
+# Logs
+logs/
+*.log
+
+# Database
+*.db
+*.sqlite
+
+# OS
+Thumbs.db
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# CI/CD
+.github/
+
+# Audit report
+PRODUCTION_READINESS_AUDIT.md
+
+# Tests
+tests/
+
+# Development files
+First_Aid_buddy/tempCodeRunnerFile.py
+.devcontainer/

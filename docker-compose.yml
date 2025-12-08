@@ -1,0 +1,75 @@
+version: '3.8'
+
+services:
+  # ==========================================================================
+  # First-Aid Buddy Bot Application
+  # ==========================================================================
+  first-aid-bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: first-aid-buddy-bot
+    ports:
+      - "8501:8501"
+    environment:
+      # Load from .env file
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - ENVIRONMENT=${ENVIRONMENT:-development}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - RATE_LIMIT_PER_MINUTE=${RATE_LIMIT_PER_MINUTE:-10}
+      - RATE_LIMIT_PER_HOUR=${RATE_LIMIT_PER_HOUR:-100}
+      - MAX_INPUT_LENGTH=${MAX_INPUT_LENGTH:-500}
+      - CLAUDE_MODEL=${CLAUDE_MODEL:-claude-sonnet-4-5-20250929}
+      - ENABLE_CSRF_PROTECTION=${ENABLE_CSRF_PROTECTION:-true}
+      - EMERGENCY_NUMBER=${EMERGENCY_NUMBER:-999}
+      - NON_EMERGENCY_NUMBER=${NON_EMERGENCY_NUMBER:-111}
+      - REGION=${REGION:-UK}
+    volumes:
+      # Mount logs directory for persistence
+      - ./logs:/app/logs
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8501/_stcore/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - first-aid-network
+    # Resource limits (adjust based on your needs)
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+  # ==========================================================================
+  # Optional: Redis for caching (uncomment if needed)
+  # ==========================================================================
+  # redis:
+  #   image: redis:7-alpine
+  #   container_name: first-aid-redis
+  #   ports:
+  #     - "6379:6379"
+  #   volumes:
+  #     - redis-data:/data
+  #   restart: unless-stopped
+  #   networks:
+  #     - first-aid-network
+  #   healthcheck:
+  #     test: ["CMD", "redis-cli", "ping"]
+  #     interval: 10s
+  #     timeout: 3s
+  #     retries: 3
+
+networks:
+  first-aid-network:
+    driver: bridge
+
+volumes:
+  # Uncomment if using Redis
+  # redis-data:
+  logs:
