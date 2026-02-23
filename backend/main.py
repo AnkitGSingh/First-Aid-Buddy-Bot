@@ -73,15 +73,20 @@ app = FastAPI(
 )
 
 # ---------------------------------------------------------------------------
-# CORS – allow the Next.js dev server and any configured production origins
+# CORS – in development allow all origins; in production use env-configured list
 # ---------------------------------------------------------------------------
 
-_origins = [o.strip() for o in Config.ALLOWED_ORIGINS.split(",") if o.strip()]
+if Config.is_development():
+    _origins = ["*"]
+    _allow_credentials = False  # Cannot be True with wildcard origins
+else:
+    _origins = [o.strip() for o in Config.ALLOWED_ORIGINS.split(",") if o.strip()]
+    _allow_credentials = True
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=_origins,
-    allow_credentials=True,
+    allow_credentials=_allow_credentials,
     allow_methods=["*"],
     allow_headers=["*"],
 )
