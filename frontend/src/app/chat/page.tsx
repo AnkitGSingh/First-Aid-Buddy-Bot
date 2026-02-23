@@ -311,7 +311,7 @@ export default function ChatPage() {
 
           <div className="max-w-3xl mx-auto space-y-4">
             {messages.map((msg) => (
-              <div key={msg.id} className="animate-fade-in">
+              <div key={msg.id} className="animate-pop-in">
                 <ChatMessage role={msg.role} content={msg.content} />
                 {msg.role === "assistant" && msg.citations && msg.citations.length > 0 && (
                   <div className="mt-2 ml-11">
@@ -324,17 +324,49 @@ export default function ChatPage() {
             {/* Typing indicator */}
             {loading && (
               <div className="flex items-start gap-3 animate-fade-in">
-                <div
-                  className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
-                  style={{ background: "linear-gradient(135deg, #F04747, #FB923C)" }}
-                >
-                  <svg viewBox="0 0 24 24" fill="white" className="w-4 h-4">
-                    <path d="M10 3H14V10H21V14H14V21H10V14H3V10H10V3Z" />
-                  </svg>
+                {/* Avatar with spinning + and expanding ring */}
+                <div className="relative shrink-0">
+                  {/* Pulsing ring */}
+                  <div
+                    className="absolute inset-0 rounded-xl"
+                    style={{
+                      border: "2px solid #F04747",
+                      animation: "ring-expand 1.2s ease-out infinite",
+                    }}
+                  />
+                  <div
+                    className="absolute inset-0 rounded-xl"
+                    style={{
+                      border: "2px solid #FB923C",
+                      animation: "ring-expand 1.2s ease-out 0.4s infinite",
+                    }}
+                  />
+                  {/* Avatar */}
+                  <div
+                    className="w-8 h-8 rounded-xl flex items-center justify-center"
+                    style={{
+                      background: "linear-gradient(135deg, #F04747, #FB923C)",
+                      boxShadow: "0 0 16px rgba(240,71,71,0.5)",
+                    }}
+                  >
+                    {/* Spinning + cross */}
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="white"
+                      className="w-4 h-4 animate-spin-cross"
+                    >
+                      <path d="M10 3H14V10H21V14H14V21H10V14H3V10H10V3Z" />
+                    </svg>
+                  </div>
                 </div>
+
+                {/* Thinking bubble */}
                 <div
-                  className="flex items-center gap-1 px-4 py-3 rounded-2xl rounded-tl-sm"
-                  style={{ background: "var(--bg-surface)", border: "1px solid var(--border-subtle)" }}
+                  className="flex items-center gap-2.5 px-4 py-3 rounded-2xl rounded-tl-sm"
+                  style={{
+                    background: "var(--bg-surface)",
+                    border: "1px solid var(--border-subtle)",
+                  }}
                 >
                   <span className="typing-dot" />
                   <span className="typing-dot" />
