@@ -33,7 +33,7 @@ FIRST_AID_KNOWLEDGE_BASE = [
     
     "Nosebleeds: Sit upright and lean slightly forward (not backward). Pinch the soft part of the nose firmly for 10 minutes without releasing. Breathe through your mouth. Apply a cold compress to the bridge of the nose. If bleeding continues after 20 minutes or is due to injury, seek medical attention.",
     
-    "Bee Stings: Remove the stinger by scraping it out with a credit card or fingernail (don't pinch). Wash with soap and water. Apply a cold pack to reduce swelling. Take antihistamine or apply hydrocortisone cream for itching. Watch for signs of allergic reaction like difficulty breathing, swelling of face or throat, or dizziness - call 911 if these occur.",
+    "Bee Stings: Remove the stinger by scraping it out with a credit card or fingernail (don't pinch). Wash with soap and water. Apply a cold pack to reduce swelling. Take antihistamine or apply hydrocortisone cream for itching. Watch for signs of allergic reaction like difficulty breathing, swelling of face or throat, or dizziness - call 999 if these occur.",
     
     "CPR (Adult): Call 999 first. Place person on firm, flat surface. Place heel of one hand on center of chest, other hand on top. Push hard and fast at rate of 100-120 compressions per minute, at least 2 inches deep. Allow chest to return to normal position between compressions. If trained, give 2 rescue breaths after every 30 compressions. Continue until help arrives.",
     
