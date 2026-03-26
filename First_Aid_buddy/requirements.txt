@@ -4,9 +4,6 @@
 # Pinned versions for reproducible builds
 # Last updated: 2025-12-07
 
-# Web Framework
-streamlit==1.29.0
-
 # AI/ML
 anthropic==0.40.0
 

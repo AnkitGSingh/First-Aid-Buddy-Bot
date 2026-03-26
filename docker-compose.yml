@@ -4,13 +4,13 @@ services:
   # ==========================================================================
   # First-Aid Buddy Bot Application
   # ==========================================================================
-  first-aid-bot:
+  first-aid-api:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: first-aid-buddy-bot
+    container_name: first-aid-buddy-api
     ports:
-      - "8501:8501"
+      - "8000:8000"
     environment:
       # Load from .env file
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
@@ -20,7 +20,6 @@ services:
       - RATE_LIMIT_PER_HOUR=${RATE_LIMIT_PER_HOUR:-100}
       - MAX_INPUT_LENGTH=${MAX_INPUT_LENGTH:-500}
       - CLAUDE_MODEL=${CLAUDE_MODEL:-claude-sonnet-4-5-20250929}
-      - ENABLE_CSRF_PROTECTION=${ENABLE_CSRF_PROTECTION:-true}
       - EMERGENCY_NUMBER=${EMERGENCY_NUMBER:-999}
       - NON_EMERGENCY_NUMBER=${NON_EMERGENCY_NUMBER:-111}
       - REGION=${REGION:-UK}
@@ -29,7 +28,7 @@ services:
       - ./logs:/app/logs
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8501/_stcore/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
       timeout: 10s
       retries: 3

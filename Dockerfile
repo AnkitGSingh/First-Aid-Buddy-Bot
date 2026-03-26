@@ -1,10 +1,10 @@
-# First-Aid Buddy Bot - Production Dockerfile
+# First-Aid Buddy Bot - FastAPI Backend Dockerfile
 # Multi-stage build for optimized image size
 
 # =============================================================================
 # Stage 1: Builder
 # =============================================================================
-FROM python:3.11-slim as builder
+FROM python:3.11-slim AS builder
 
 WORKDIR /build
 
@@ -14,10 +14,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements first (for better caching)
-COPY First_Aid_buddy/requirements.txt .
+COPY backend/requirements.txt ./backend-requirements.txt
+COPY First_Aid_buddy/requirements.txt ./core-requirements.txt
 
 # Install Python dependencies
-RUN pip install --no-cache-dir --user -r requirements.txt
+RUN pip install --no-cache-dir --user -r backend-requirements.txt
+RUN pip install --no-cache-dir --user -r core-requirements.txt
 
 # =============================================================================
 # Stage 2: Runtime
@@ -43,6 +45,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY --from=builder /root/.local /root/.local
 
 # Copy application code
+COPY backend/ ./backend/
 COPY First_Aid_buddy/ ./First_Aid_buddy/
 COPY LICENSE ./
 COPY TERMS_OF_SERVICE.md ./
@@ -54,16 +57,15 @@ RUN mkdir -p /app/logs && chown -R appuser:appuser /app
 # Switch to non-root user
 USER appuser
 
-# Expose Streamlit port
-EXPOSE 8501
+# Expose FastAPI port
+EXPOSE 8000
 
 # Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:8501/_stcore/health || exit 1
+HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
+    CMD curl -f http://localhost:8000/health || exit 1
 
-# Run Streamlit app
-CMD ["streamlit", "run", "First_Aid_buddy/app.py", \
-     "--server.port=8501", \
-     "--server.address=0.0.0.0", \
-     "--server.headless=true", \
-     "--server.fileWatcherType=none"]
+# Run FastAPI backend
+CMD ["python", "-m", "uvicorn", "backend.main:app", \
+     "--host", "0.0.0.0", \
+     "--port", "8000", \
+     "--workers", "1"]

@@ -163,11 +163,11 @@ jobs:
           # Verify Python interpreter works inside the container
           docker run --rm first-aid-buddy-bot:test python --version
 
-          # Verify all application dependencies are importable
+          # Verify all backend dependencies are importable
           docker run --rm \
             -e ANTHROPIC_API_KEY=sk-ant-test-key-for-ci-testing-only \
             first-aid-buddy-bot:test \
-            python -c "import streamlit; import anthropic; print('All dependencies OK')"
+            python -c "import fastapi; import uvicorn; import anthropic; import pydantic; print('All dependencies OK')"
 
   # ===========================================================================
   # Documentation Check
