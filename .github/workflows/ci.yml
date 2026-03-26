@@ -157,12 +157,17 @@ jobs:
 
       - name: Test Docker image
         run: |
-          docker run --rm --name test-container -d \
-            -e ANTHROPIC_API_KEY=sk-ant-test-key \
-            first-aid-buddy-bot:test
-          sleep 10
-          docker logs test-container
-          docker stop test-container || true
+          # Verify image metadata
+          docker image inspect first-aid-buddy-bot:test --format='Image built: {{.Id}}'
+
+          # Verify Python interpreter works inside the container
+          docker run --rm first-aid-buddy-bot:test python --version
+
+          # Verify all application dependencies are importable
+          docker run --rm \
+            -e ANTHROPIC_API_KEY=sk-ant-test-key-for-ci-testing-only \
+            first-aid-buddy-bot:test \
+            python -c "import streamlit; import anthropic; print('All dependencies OK')"
 
   # ===========================================================================
   # Documentation Check
