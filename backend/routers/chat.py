@@ -4,7 +4,6 @@ The core endpoint: accepts a user message, runs the RAG + LLM pipeline,
 and returns a structured response with emergency flag and citations.
 """
 
-import uuid
 from fastapi import APIRouter, HTTPException, Request, status
 
 from ..models.chat import ChatRequest, ChatResponse, Citation
@@ -22,9 +21,13 @@ router = APIRouter(tags=["chat"])
 
 
 @router.post("/chat", response_model=ChatResponse)
-async def chat(payload: ChatRequest, request: Request):
+def chat(payload: ChatRequest, request: Request):
     """
     Process a first-aid question through the full RAG + LLM pipeline.
+
+    Declared as a plain ``def`` so FastAPI runs it in a thread pool,
+    preventing the synchronous Anthropic client + retry sleeps from
+    blocking the event loop under concurrent load.
 
     - Validates and rate-limits the request.
     - Classifies intent (LIFE_THREATENING vs GENERAL_QUERY).
@@ -39,8 +42,13 @@ async def chat(payload: ChatRequest, request: Request):
             detail="AI service is not configured. Please set a valid ANTHROPIC_API_KEY in backend/.env.",
         )
 
-    # Use provided session_id or derive from IP (anonymous sessions)
-    session_id = payload.session_id or str(request.client.host)
+    # Use provided session_id or derive from IP (anonymous sessions).
+    # Guard against request.client being None (e.g. certain proxy configurations).
+    client_host = request.client.host if request.client else "anonymous"
+    session_id = payload.session_id or client_host
+
+    # Resolve the correct emergency number for the requested region
+    emergency_number = Config.get_emergency_number_for_region(payload.region or Config.REGION)
 
     try:
         answer, is_emergency, raw_citations, processing_ms = run_chat_pipeline(
@@ -64,8 +72,8 @@ async def chat(payload: ChatRequest, request: Request):
     return ChatResponse(
         answer=answer,
         is_emergency=is_emergency,
-        emergency_number=Config.EMERGENCY_NUMBER,
+        emergency_number=emergency_number,   # region-aware, not global default
         citations=citations,
-        session_id=payload.session_id,
+        session_id=session_id,              # return the *effective* session_id
         processing_ms=round(processing_ms, 1),
     )

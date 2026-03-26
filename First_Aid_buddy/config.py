@@ -80,6 +80,25 @@ class Config:
     NON_EMERGENCY_NUMBER: str = os.getenv('NON_EMERGENCY_NUMBER', '111')
     REGION: str = os.getenv('REGION', 'UK')
 
+    # Map of region codes to their primary emergency telephone numbers.
+    # Add new regions here; the API and frontend both read from this single source.
+    REGION_EMERGENCY_NUMBERS: dict = {
+        "UK": "999",
+        "US": "911",
+        "EU": "112",
+        "AU": "000",
+        "CA": "911",
+        "NZ": "111",
+    }
+
+    @classmethod
+    def get_emergency_number_for_region(cls, region: str) -> str:
+        """Return the correct emergency number for the given region code.
+
+        Falls back to ``EMERGENCY_NUMBER`` (env-configured default) for unknown codes.
+        """
+        return cls.REGION_EMERGENCY_NUMBERS.get((region or "").upper(), cls.EMERGENCY_NUMBER)
+
     @classmethod
     def is_production(cls) -> bool:
         """Check if running in production environment"""

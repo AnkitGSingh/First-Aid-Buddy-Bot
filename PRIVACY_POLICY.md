@@ -1,6 +1,6 @@
 # Privacy Policy
 
-**Last Updated: December 7, 2025**
+**Last Updated: February 23, 2026**
 
 ## Introduction
 
@@ -66,10 +66,16 @@ We use collected information to:
 ## 3. How We Protect Your Information
 
 ### 3.1 Security Measures
-- API keys stored in browser session only (not server-side)
-- HTTPS encryption for data transmission
+- API keys are stored in server-side environment variables and are never transmitted to your browser
+- HTTPS encryption for all data in transit
 - No long-term storage of queries or personal information
 - Regular security updates and monitoring
+
+### 3.2 Special Category (Health) Data
+Because you may share health-related information in your queries, this data is treated as “special category”
+data under UK GDPR. We process it only as strictly necessary to provide the Service, for as short a time
+as possible, and we do not use it for any secondary purpose (including profiling or advertising).
+We encourage you not to include names, addresses, or medical record numbers in your queries.
 
 ### 3.2 Limitations
 **However, no method of transmission over the Internet is 100% secure.** We cannot guarantee absolute security.
@@ -121,7 +127,7 @@ If you are in the EU/UK, you have the right to:
 - Withdraw consent
 
 ### 6.2 Exercising Your Rights
-Contact us at [your-email@example.com] to exercise your rights.
+Contact us at **privacy@first-aid-buddy.app** to exercise your rights.
 
 ### 6.3 Limitations
 Since we don't store queries long-term, there may be limited data to access or delete.
@@ -130,8 +136,8 @@ Since we don't store queries long-term, there may be limited data to access or d
 
 ## 7. Cookies and Tracking
 
-### 7.1 Streamlit Session Cookies
-- The Service uses session cookies to maintain your session state
+### 7.1 Session Cookies
+- The Service uses session cookies to maintain your browser session state
 - Required for the application to function
 - Cleared when you close your browser
 
@@ -237,13 +243,13 @@ You can choose not to use the Service if you disagree with this Privacy Policy.
 
 ### 14.1 Questions or Concerns
 For privacy-related questions, contact:
-- **Email:** [your-email@example.com]
-- **Subject:** "Privacy Policy Inquiry"
+- **Email:** privacy@first-aid-buddy.app
+- **Subject:** “Privacy Policy Inquiry”
 
 ### 14.2 Data Requests
 For GDPR or data-related requests:
-- **Email:** [your-email@example.com]
-- **Subject:** "Data Request"
+- **Email:** privacy@first-aid-buddy.app
+- **Subject:** “Data Request”
 
 ### 14.3 Response Time
 We will respond to inquiries within 30 days.
@@ -272,16 +278,17 @@ We may process data to comply with legal requirements.
 
 **In Plain English:**
 - We process your queries to provide first-aid guidance
-- Your queries are sent to Anthropic's AI service
-- We don't permanently store your queries
-- Your API key stays in your browser (not our servers)
-- We use basic technical data to run the Service
-- We don't sell your data or use it for advertising
-- Don't share personal/sensitive information
+- Your queries are sent to Anthropic’s AI service
+- We don’t permanently store your queries
+- API keys are held server-side in environment variables; you do not need to provide one
+- Session identifiers (hashed IP or browser-generated ID) are used for rate limiting only
+- We don’t sell your data or use it for advertising
+- Health-related information you share is treated as special-category data and processed minimally
+- Don’t share personal/sensitive information (names, addresses, medical record IDs)
 - You can stop using the Service anytime
 
 ---
 
-**Questions? Contact: [your-email@example.com]**
+**Questions? Contact: privacy@first-aid-buddy.app**
 
 **For Medical Emergencies: Call 999 (UK) or 911 (US) - NOT this Service**

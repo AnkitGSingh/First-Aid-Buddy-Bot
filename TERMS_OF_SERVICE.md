@@ -154,7 +154,7 @@ We reserve the right to terminate or suspend access to the Service at any time, 
 
 ## 12. Governing Law
 
-These Terms shall be governed by the laws of [Your Jurisdiction], without regard to conflict of law provisions.
+These Terms shall be governed by the laws of England and Wales, without regard to conflict of law provisions.
 
 ---
 
@@ -166,7 +166,7 @@ If any provision of these Terms is found to be unenforceable, the remaining prov
 
 ## 14. Contact
 
-For questions about these Terms, please contact: [your-email@example.com]
+For questions about these Terms, please contact: **legal@first-aid-buddy.app**
 
 ---
 

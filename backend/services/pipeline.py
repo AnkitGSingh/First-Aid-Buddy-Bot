@@ -36,6 +36,62 @@ logger = setup_logger("pipeline")
 
 
 # ---------------------------------------------------------------------------
+# Deterministic safety rules (fire even when LLM classification is wrong)
+# ---------------------------------------------------------------------------
+
+# Phrases that unambiguously signal a life-threatening emergency.
+# Intentionally broad to minimise false negatives — false positives (over-triage)
+# are safer than missing a real emergency.
+_EMERGENCY_KEYWORDS = frozenset({
+    "not breathing", "stopped breathing", "no pulse", "cardiac arrest",
+    "heart attack", "chest pain", "chest tightness", "chest pressure",
+    "unconscious", "unresponsive", "passed out", "collapsed",
+    "severe bleeding", "won't stop bleeding", "blood everywhere",
+    "anaphylaxis", "anaphylactic", "epipen",
+    "stroke", "face drooping", "arm weakness", "slurred speech",
+    "choking", "can't breathe", "cannot breathe", "not breathing",
+    "poisoning", "overdose", "swallowed medication",
+    "drowning", "electric shock", "electrocution",
+    "severe burn", "major burn", "third degree burn",
+    "spinal injury", "broken neck", "broken back",
+    "seizure", "convulsion",
+})
+
+# Phrases that signal self-harm or suicidal crisis.
+# We never give instructions; we return safe signposting.
+_CRISIS_KEYWORDS = frozenset({
+    "kill myself", "end my life", "commit suicide", "want to die",
+    "suicidal", "self harm", "self-harm", "cutting myself",
+    "take my own life", "harm myself",
+})
+
+_CRISIS_RESPONSE = (
+    "I’m really sorry you’re going through something so painful. "
+    "Please reach out to a crisis service right now — you don’t have to face this alone.\n\n"
+    "**UK:** Call or text **116 123** (Samaritans \u2014 free, 24/7)\n"
+    "**US:** Call or text **988** (Suicide & Crisis Lifeline)\n"
+    "**International:** https://www.befrienders.org\n\n"
+    "If you are in immediate danger, call **999** (UK) or **911** (US) now."
+)
+
+
+def _is_deterministically_emergency(text: str) -> bool:
+    """Return True when the query matches a known life-threatening pattern.
+
+    Acts as a safety net alongside (not instead of) LLM classification;
+    the final `is_emergency` flag is the logical OR of both.
+    """
+    lower = text.lower()
+    return any(kw in lower for kw in _EMERGENCY_KEYWORDS)
+
+
+def _is_crisis_query(text: str) -> bool:
+    """Return True when the query signals self-harm or suicidal intent."""
+    lower = text.lower()
+    return any(kw in lower for kw in _CRISIS_KEYWORDS)
+
+
+# ---------------------------------------------------------------------------
 # Citation extraction
 # ---------------------------------------------------------------------------
 
@@ -93,15 +149,25 @@ def run_chat_pipeline(
     # 1. Validate & sanitise
     sanitized = validate_input(user_input)
 
+    # 1b. Crisis safeguard — checked BEFORE rate-limiting so a distressed user
+    #     who has exhausted their quota still receives empathetic signposting
+    #     rather than a rate-limit error.
+    if _is_crisis_query(sanitized):
+        processing_ms = (time.time() - start) * 1000
+        log_user_query(logger, len(sanitized), "CRISIS_SAFEGUARD", processing_ms)
+        return _CRISIS_RESPONSE, False, [], processing_ms
+
     # 2. Rate-limit check
     if session_id:
         allowed, msg = rate_limiter.check_rate_limit(session_id)
         if not allowed:
             raise ValidationError(msg)
 
-    # 3. Classify intent
+    # 3. Classify intent: use LLM classification OR deterministic keyword match.
+    #    Deterministic rules act as a safety net — they can only *add* an
+    #    emergency flag, never remove one the LLM would have set.
     classification = classify_intent(sanitized, client)
-    is_emergency = classification == "LIFE_THREATENING"
+    is_emergency = (classification == "LIFE_THREATENING") or _is_deterministically_emergency(sanitized)
 
     # 4. Retrieve relevant docs
     retrieved_docs_str = run_retrieval(sanitized)

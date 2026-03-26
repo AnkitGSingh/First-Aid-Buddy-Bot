@@ -68,8 +68,9 @@ app = FastAPI(
     ),
     version="1.0.0",
     lifespan=lifespan,
-    docs_url="/docs",
-    redoc_url="/redoc",
+    # Disable interactive API docs in production to prevent schema enumeration
+    docs_url="/docs" if Config.is_development() else None,
+    redoc_url="/redoc" if Config.is_development() else None,
 )
 
 # ---------------------------------------------------------------------------
@@ -87,8 +88,8 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=_origins,
     allow_credentials=_allow_credentials,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST"],          # only methods the API actually uses
+    allow_headers=["Content-Type"],         # no wildcard — prevents arbitrary header forwarding
 )
 
 # ---------------------------------------------------------------------------

@@ -1,4 +1,28 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+import AIStatusBadge from "@/components/AIStatusBadge";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "First-Aid Buddy",
+  applicationCategory: "HealthApplication",
+  description:
+    "AI-powered first-aid guidance grounded in NHS, Red Cross & St John Ambulance guidelines. Step-by-step instructions with cited sources.",
+  operatingSystem: "Web",
+  offers: { "@type": "Offer", price: "0", priceCurrency: "GBP" },
+  featureList: [
+    "Emergency triage with regional emergency numbers (UK/US/EU)",
+    "AI-powered step-by-step first-aid instructions",
+    "Cited knowledge-base sources for every response",
+    "Zero ads and zero tracking",
+  ],
+  audience: { "@type": "Audience", audienceType: "General public" },
+};
 
 const FEATURES = [
   {
@@ -7,8 +31,8 @@ const FEATURES = [
         <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
       </svg>
     ),
-    color: "text-red-400",
-    glow: "rgba(240,71,71,0.15)",
+    color: "text-red-500",
+    glow: "rgba(220,38,38,0.10)",
     title: "Emergency Triage",
     body: "Instantly detects life-threatening situations and escalates with the correct emergency number for your region — UK, US, or EU.",
   },
@@ -18,8 +42,8 @@ const FEATURES = [
         <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z" />
       </svg>
     ),
-    color: "text-blue-400",
-    glow: "rgba(79,142,247,0.15)",
+    color: "text-teal-600",
+    glow: "rgba(13,148,136,0.12)",
     title: "AI-Powered Advice",
     body: "Claude AI classifies intent and generates step-by-step guidance tailored to the specific situation — not generic Q&A.",
   },
@@ -29,73 +53,77 @@ const FEATURES = [
         <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
       </svg>
     ),
-    color: "text-violet-400",
-    glow: "rgba(139,92,246,0.15)",
+    color: "text-green-600",
+    glow: "rgba(22,163,74,0.10)",
     title: "Cited Sources",
-    body: "Every response references the exact NHS / Red Cross knowledge-base document it came from. No hallucinations.",
+    body: "Every response is grounded in a curated first-aid knowledge base and shows you exactly which source it used. Designed to reduce hallucinations — errors may still occur.",
   },
 ];
 
 const STATS = [
-  { value: "15", label: "first-aid topics" },
-  { value: "999", label: "UK emergency ready" },
-  { value: "AI", label: "Claude-powered" },
-  { value: "0s", label: "ads, zero tracking" },
+  { value: "15+", label: "first-aid topics" },
+  { value: "UK/US/EU", label: "regions supported" },
+  { value: "RAG", label: "cited AI guidance" },
+  { value: "0", label: "ads or tracking" },
 ];
 
 export default function Home() {
   return (
-    <main
-      className="relative min-h-screen overflow-hidden"
-      style={{ background: "var(--bg-base)" }}
-    >
+    <>
+      {/* JSON-LD structured data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <main
+        id="main-content"
+        className="relative min-h-screen overflow-hidden"
+        style={{ background: "var(--bg-base)" }}
+      >
       {/* ── Ambient background blobs ── */}
       <div
         aria-hidden
-        className="pointer-events-none absolute -top-40 -left-40 w-[700px] h-[700px] rounded-full opacity-20 animate-float"
-        style={{ background: "radial-gradient(circle, rgba(79,142,247,0.6) 0%, transparent 70%)", filter: "blur(80px)" }}
+        className="pointer-events-none absolute -top-40 -left-40 w-[700px] h-[700px] rounded-full opacity-30 animate-float"
+        style={{ background: "radial-gradient(circle, rgba(13,148,136,0.35) 0%, transparent 70%)", filter: "blur(90px)" }}
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute top-1/3 -right-60 w-[600px] h-[600px] rounded-full opacity-15 animate-float-slow"
-        style={{ background: "radial-gradient(circle, rgba(139,92,246,0.6) 0%, transparent 70%)", filter: "blur(80px)" }}
+        className="pointer-events-none absolute top-1/3 -right-60 w-[600px] h-[600px] rounded-full opacity-20 animate-float-slow"
+        style={{ background: "radial-gradient(circle, rgba(22,163,74,0.30) 0%, transparent 70%)", filter: "blur(90px)" }}
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute bottom-0 left-1/4 w-[400px] h-[400px] rounded-full opacity-10"
-        style={{ background: "radial-gradient(circle, rgba(240,71,71,0.5) 0%, transparent 70%)", filter: "blur(60px)" }}
+        className="pointer-events-none absolute bottom-0 left-1/4 w-[400px] h-[400px] rounded-full opacity-15"
+        style={{ background: "radial-gradient(circle, rgba(13,148,136,0.20) 0%, transparent 70%)", filter: "blur(70px)" }}
       />
 
-      {/* Grid line overlay */}
+      {/* Subtle dot-grid overlay */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-[0.025]"
+        className="pointer-events-none absolute inset-0 opacity-[0.04]"
         style={{
-          backgroundImage: "linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)",
-          backgroundSize: "60px 60px",
+          backgroundImage: "radial-gradient(circle, rgba(13,148,136,0.8) 1px, transparent 1px)",
+          backgroundSize: "32px 32px",
         }}
       />
 
       {/* ── Nav bar ── */}
       <nav className="relative z-10 flex items-center justify-between px-6 py-5 max-w-6xl mx-auto">
         <div className="flex items-center gap-2.5">
-          <div className="flex items-center justify-center w-8 h-8 rounded-lg" style={{ background: "linear-gradient(135deg, #F04747, #FB923C)" }}>
+          <div className="flex items-center justify-center w-8 h-8 rounded-lg" style={{ background: "linear-gradient(135deg, #0D9488, #0F766E)" }}>
             <svg viewBox="0 0 24 24" fill="white" className="w-5 h-5">
               <path d="M10 3H14V10H21V14H14V21H10V14H3V10H10V3Z" />
             </svg>
           </div>
-          <span className="font-bold text-white text-lg tracking-tight">First-Aid Buddy</span>
+          <span className="font-bold text-lg tracking-tight" style={{ color: "var(--text-primary)" }}>First-Aid Buddy</span>
         </div>
         <div className="flex items-center gap-3">
-          <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-full" style={{ background: "rgba(34,197,94,0.12)", border: "1px solid rgba(34,197,94,0.2)", color: "#22c55e" }}>
-            <span className="w-1.5 h-1.5 rounded-full bg-green-400 inline-block" style={{ boxShadow: "0 0 6px #22c55e" }} />
-            AI Online
-          </span>
+          <AIStatusBadge />
           <Link
             href="/chat"
             className="btn-primary px-4 py-2 rounded-xl text-sm font-semibold"
           >
-            Open Chat →
+            Start First-Aid Chat →
           </Link>
         </div>
       </nav>
@@ -104,20 +132,20 @@ export default function Home() {
       <section className="relative z-10 text-center px-6 pt-16 pb-20 max-w-4xl mx-auto animate-fade-in">
         {/* Badge */}
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium mb-8"
-          style={{ background: "rgba(79,142,247,0.1)", border: "1px solid rgba(79,142,247,0.2)", color: "var(--accent-blue)" }}>
+          style={{ background: "rgba(13,148,136,0.10)", border: "1px solid rgba(13,148,136,0.25)", color: "var(--accent-teal)" }}>
           <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5">
             <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
           </svg>
-          NHS · Red Cross · St John Ambulance backed
+          Based on NHS, Red Cross &amp; St John Ambulance first-aid guidelines
         </div>
 
-        <h1 className="text-5xl sm:text-7xl font-black leading-[1.05] tracking-tight mb-6 text-white">
+        <h1 className="text-5xl sm:text-7xl font-black leading-[1.05] tracking-tight mb-6" style={{ color: "var(--text-primary)" }}>
           First aid,{" "}
           <span className="text-gradient">when it matters</span>
           <br />most.
         </h1>
 
-        <p className="text-lg sm:text-xl text-[color:var(--text-muted)] max-w-2xl mx-auto mb-10 leading-relaxed">
+        <p className="text-lg sm:text-xl max-w-2xl mx-auto mb-10 leading-relaxed" style={{ color: "var(--text-muted)" }}>
           AI that triages emergencies, delivers step-by-step first-aid instructions, and cites every source — in seconds, not search results.
         </p>
 
@@ -125,12 +153,12 @@ export default function Home() {
           <Link
             href="/chat"
             className="btn-primary w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-2xl text-base font-bold shadow-2xl"
-            style={{ boxShadow: "0 12px 40px rgba(79,142,247,0.4)" }}
+            style={{ boxShadow: "0 12px 40px rgba(13,148,136,0.35)" }}
           >
             <svg viewBox="0 0 24 24" fill="white" className="w-5 h-5">
               <path d="M10 3H14V10H21V14H14V21H10V14H3V10H10V3Z" />
             </svg>
-            Start Emergency Chat
+            Start First-Aid Chat
             <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth={2.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
             </svg>
@@ -139,10 +167,15 @@ export default function Home() {
             href="http://localhost:8000/docs"
             target="_blank"
             rel="noopener noreferrer"
+            aria-label="API Documentation (opens in new tab)"
             className="inline-flex items-center gap-2 px-6 py-4 rounded-2xl text-sm font-semibold transition-all hover:opacity-80"
-            style={{ border: "1px solid var(--border-mid)", color: "var(--text-muted)" }}
+            style={{ border: "1px solid var(--border-mid)", color: "var(--text-muted)", background: "var(--bg-surface)" }}
           >
-            API Docs ↗
+            API Docs
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-3.5 h-3.5" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+            </svg>
+            <span className="sr-only">(opens in new tab)</span>
           </a>
         </div>
 
@@ -152,7 +185,7 @@ export default function Home() {
           {STATS.map((s) => (
             <div key={s.label} className="flex flex-col items-center py-4 px-3"
               style={{ background: "var(--bg-surface)" }}>
-              <span className="text-xl font-black text-white">{s.value}</span>
+              <span className="text-xl font-black" style={{ color: "var(--accent-teal)" }}>{s.value}</span>
               <span className="text-[11px] mt-0.5" style={{ color: "var(--text-muted)" }}>{s.label}</span>
             </div>
           ))}
@@ -160,7 +193,8 @@ export default function Home() {
       </section>
 
       {/* ── Feature cards ── */}
-      <section className="relative z-10 px-6 pb-16 max-w-5xl mx-auto">
+      <section className="relative z-10 px-6 pb-16 max-w-5xl mx-auto" aria-labelledby="features-heading">
+        <h2 id="features-heading" className="sr-only">Key Features</h2>
         <div className="grid sm:grid-cols-3 gap-5">
           {FEATURES.map((f, i) => (
             <div
@@ -168,23 +202,33 @@ export default function Home() {
               className="glass rounded-2xl p-6 group hover:scale-[1.02] transition-transform duration-300 animate-slide-up"
               style={{ animationDelay: `${i * 0.1}s`, boxShadow: `0 8px 32px ${f.glow}` }}
             >
-              <div className={`mb-4 ${f.color} opacity-80 group-hover:opacity-100 transition-opacity`}>
+              <div className={`mb-4 ${f.color} opacity-80 group-hover:opacity-100 transition-opacity`} aria-hidden="true">
                 {f.icon}
               </div>
-              <h3 className="text-white font-bold text-base mb-2">{f.title}</h3>
+              <h3 className="font-bold text-base mb-2" style={{ color: "var(--text-primary)" }}>{f.title}</h3>
               <p className="text-sm leading-relaxed" style={{ color: "var(--text-muted)" }}>{f.body}</p>
             </div>
           ))}
         </div>
       </section>
 
-      {/* ── Disclaimer ── */}
+      {/* ── Footer ── */}
       <footer className="relative z-10 text-center px-6 py-8 border-t" style={{ borderColor: "var(--border-subtle)" }}>
-        <p className="text-xs max-w-lg mx-auto" style={{ color: "var(--text-dim)" }}>
-          ⚠ First-Aid Buddy provides general guidance only and is not a substitute for professional medical advice.
-          In any emergency, call <strong className="text-white">999</strong> (UK) or your local emergency number immediately.
+        <p className="text-xs max-w-2xl mx-auto mb-2" style={{ color: "var(--text-muted)" }}>
+          ⚠ <strong style={{ color: "var(--text-primary)" }}>Not medical advice.</strong> First-Aid Buddy provides general first-aid guidance only and is not a substitute for professional medical care.
+          In any emergency, call <strong style={{ color: "var(--accent-red)" }}>999</strong> (UK), <strong style={{ color: "var(--accent-red)" }}>911</strong> (US), or <strong style={{ color: "var(--accent-red)" }}>112</strong> (EU) immediately.
         </p>
+        <p className="text-[11px] mb-4" style={{ color: "var(--text-dim)" }}>
+          Not affiliated with or endorsed by NHS, Red Cross, or St John Ambulance.
+        </p>
+        <nav aria-label="Footer" className="flex flex-wrap justify-center gap-4 text-[11px]" style={{ color: "var(--text-dim)" }}>
+          <Link href="/about" className="hover:underline transition-colors" style={{ color: "var(--text-muted)" }}>About</Link>
+          <Link href="/privacy" className="hover:underline transition-colors" style={{ color: "var(--text-muted)" }}>Privacy Policy</Link>
+          <Link href="/terms" className="hover:underline transition-colors" style={{ color: "var(--text-muted)" }}>Terms of Service</Link>
+          <Link href="/cookies" className="hover:underline transition-colors" style={{ color: "var(--text-muted)" }}>Cookies</Link>
+        </nav>
       </footer>
     </main>
+    </>
   );
 }
