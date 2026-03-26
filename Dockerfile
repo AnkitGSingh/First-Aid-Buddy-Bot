@@ -17,9 +17,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY backend/requirements.txt ./backend-requirements.txt
 COPY First_Aid_buddy/requirements.txt ./core-requirements.txt
 
-# Install Python dependencies
-RUN pip install --no-cache-dir --user -r backend-requirements.txt
-RUN pip install --no-cache-dir --user -r core-requirements.txt
+# Install to a dedicated prefix so it can be copied to /usr/local in runtime
+# (avoids --user path issues when running as a non-root user)
+RUN pip install --no-cache-dir --prefix=/install -r backend-requirements.txt
+RUN pip install --no-cache-dir --prefix=/install -r core-requirements.txt
 
 # =============================================================================
 # Stage 2: Runtime
@@ -28,8 +29,7 @@ FROM python:3.11-slim
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1 \
-    PYTHONDONTWRITEBYTECODE=1 \
-    PATH=/root/.local/bin:$PATH
+    PYTHONDONTWRITEBYTECODE=1
 
 # Create non-root user for security
 RUN useradd --create-home --shell /bin/bash appuser
@@ -41,8 +41,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy Python dependencies from builder
-COPY --from=builder /root/.local /root/.local
+# Copy installed packages from builder into system Python path (accessible to all users)
+COPY --from=builder /install /usr/local
 
 # Copy application code
 COPY backend/ ./backend/
