@@ -80,11 +80,13 @@ class TestRateLimiter:
         limiter = RateLimiter()
         user_id = "user123"
 
-        # Add timestamps within the hour up to limit
+        # Add timestamps within the hour up to limit.
+        # Spread 30s apart starting from 2 minutes ago so:
+        # - none fall within the last-minute window (avoids per-minute block)
+        # - all fall within the last-hour window (oldest ~51 min ago for 100 reqs)
         now = datetime.now()
         for i in range(Config.RATE_LIMIT_PER_HOUR):
-            # Spread across the hour to avoid minute limit
-            timestamp = now - timedelta(minutes=i)
+            timestamp = now - timedelta(seconds=120 + i * 30)
             limiter.requests[user_id].append(timestamp)
 
         # Next request should be blocked

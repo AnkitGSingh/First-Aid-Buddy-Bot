@@ -17,15 +17,15 @@ from First_Aid_buddy.config import Config
 @pytest.fixture
 def mock_anthropic_client():
     """Mock Anthropic client for testing"""
-    client = Mock(spec=anthropic.Anthropic)
+    client = MagicMock()
 
     # Mock successful classification response
-    classification_response = Mock()
-    classification_response.content = [Mock(text="GENERAL_QUERY")]
+    classification_response = MagicMock()
+    classification_response.content = [MagicMock(text="GENERAL_QUERY")]
 
     # Mock successful generation response
-    generation_response = Mock()
-    generation_response.content = [Mock(text="Test response")]
+    generation_response = MagicMock()
+    generation_response.content = [MagicMock(text="Test response")]
 
     client.messages.create.return_value = classification_response
 

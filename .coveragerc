@@ -1,0 +1,17 @@
+[run]
+source = First_Aid_buddy
+omit =
+    */First_Aid_buddy/app.py
+    */First_Aid_buddy/first_aid_bot.py
+    *\First_Aid_buddy\app.py
+    *\First_Aid_buddy\first_aid_bot.py
+    */tests/*
+    */__pycache__/*
+
+[report]
+precision = 2
+show_missing = True
+skip_covered = False
+
+[html]
+directory = htmlcov
